@@ -51,10 +51,8 @@ This task involves cloning your repository on your computer. Where should we pla
 
 >**Question 1**: Why should you not rely on *GitHub* as a backup?
 
-```{r, answer1, echo=TRUE, eval = FALSE}
-
-## Write your answer here. 
-
+```{r, answer1, echo=TRUE, eval = TRUE}
+# Using Github it is possible to work with collaborators to copy analyse or reuse code or data while dealing with conflicts between files and to record what changes have been made in the files. But there are some disadvantages to Github as a backup tool. Firstly, after making changes to files in the repository on the local computer, these changes must be uploaded even to the GitHub folder before collaborators can download them from the cloud. Secondly, the file formats backed up by GitHub are limited and often require format changes. Thirdly, GitHub supports a limited number of collaborators, and although the uploaded articles are visible to everyone in the public repository, only those who have been added as collaborators can make collaborative changes. In addition, every time a change is uploaded, the files saved in GitHub are changed and can be accessed, modified, improved or even updated with new features by any collaborator, but this results in only one final modified file being left after a github upload, and although it can show what changes have been made to the file, it cannot easily store every important intermediate product files. Finally, although GitHub's public storage space is unlimited, it is expensive to pay extra to expand your private, closed repository, which is not very convenient as a private backup tool. In contrast, file sharing services such as Dropbox and OneDrive are easier to use and can maintain a consistent set of files across your computer and/or collaborators. So it is recommended that github be used in conjunction with a backup tool such as OneDrive.
 ```
 
 I'd usually suggest placing your repo in a cloud storage system like, *OneDrive*, *Dropbox*, or *GoogleDrive*. These will ensure that all your files are backed up and *GitHub* will provide a record of the detailed history. 
@@ -63,8 +61,8 @@ Before moving on you might have noticed that the code block above has a name `an
 
 >**Question 2**: In the second code block called `answer1` if we change echo = TRUE to echo = FALSE what will happen to the code block `answer1` when you render it?
 
-```{r answer2, echo=TRUE, eval = FALSE}
-# Write your answer here
+```{r answer2, echo=TRUE, eval = TRUE}
+# If we change echo = TRUE to echo = FALSE, the code block will be hidden in knit and no code content will be displayed.
 ```
 
 **Important**: Notice that `eval = FALSE` for many code chunks. When you complete the tasks. Make sure to change these to `TRUE` otherwise you will find your code does not run!
@@ -91,9 +89,10 @@ Make sure you have added a `data/` folder to your working directory that you jus
 
 Write your answer in the code chunk below:
 
-```{r, loaddata, eval = FALSE, echo=TRUE}
+```{r, loaddata, eval =TRUE, echo=TRUE}
+library(tidyverse)
 
-path <- "replace this text with your relative path to a file in the 'data/' folder"
+path <- 'data/OA_activitydat_20190302_BIOL3207.csv'
   
 data <- read_csv(path)
 
@@ -103,9 +102,9 @@ Let's say that you added a new data folder that was inside an output folder (i.e
 
 >**Question 4**: Using the `write_csv` function how would you write the path name to save this file to `output/data`?
 
-```{r, write, eval = FALSE, echo=TRUE}
+```{r, write, eval = TRUE, echo=TRUE}
 
-path <- "replace this text with your relative path"
+path <- "output/data/ccfish"
 
 write_csv(data, file = path)
 
@@ -119,18 +118,48 @@ We're ready for some coding! Lets do some coding and wrangling of the `OA_activi
 First, write some code below to remove missing data
 
 ```{r, rmMiss}
-# Code to removing missing data from the `OA_activitydat_20190302_BIOL3207.csv` data frame. 
-
+data_ef <- data %>% filter(!is.na(activity))
 ```
 
 Second, drop out irrelevant columns and check that there are no spelling issues in `species` and `treatment`. Create a table of summary data that includes: 1) the mean, 2) the standard error and 3) the sample sizes of unique fish across ALL six fish species for each treatment. This will also help you detect any spelling errors. You can use the R package [`flextable`](https://ardata-fr.github.io/flextable-book/) to print out the results in a nice neat format! If you haven't heard about `flextable` spend 10 or so minutes having a look at it's functionality. It's incredible! You'll use this for tables throughout.
 
 ```{r summaryTab}
 # Drop irrelevant columns
+library(dplyr)
+# install.packages('plotrix')
+library('plotrix')
 
+data_clean <- select(data_ef,-c(2,9))
 # Check spelling in species and treatment but also generate a summary table
 
-# Use flextable to render the summary table in a tidy format
+# Dear Eric/Dan, I am sorry but I am a bit confused about the "Check spelling" in this question. I asked two teachers and they gave different explanations, so I will answer according to each of them.
+
+# Firstly, in the first explanation given by the teacher, since in version_control_github_instructions.html, there are only 5 types of species given, but there are 6 in the data table, the misspelling here means that we need to delete a spelling that is not reflected in version_control_github_instructions.html. instructions.html, and then make a graph.
+data_nw <- data_clean %>% filter(species!="whitedams")
+data_check_nw<- data_nw %>%group_by(species,treatment) %>% summarise(mean_activity = mean(activity), mean_sl = mean(sl), sd_error_activity = std.error(activity),sd_error_sl = std.error(sl),number=length(species))
+
+# Use flextable to render the summary table in a tidy forma
+set_flextable_defaults(
+  font.size = 10, theme_fun = theme_vanilla,
+  padding = 6,
+  background.color = "#B6FFE9")
+flextable(data_check_nw)
+
+# Secondly, the second explanation given by the teacher is that we need to check the data directly for spelling errors and then make sure the words are spelt correctly before graphing.
+
+# We can either check this directly visually or use the following code
+data_clean$species %>%unique()
+
+# We can see that there are 6 species names in total and no other names appear, so there are no spelling errors, so we can go ahead and make a graph of 6 species
+
+data_check <- data_clean %>%group_by(species,treatment) %>% summarise(mean_activity = mean(activity), mean_sl = mean(sl), sd_error_activity = std.error(activity),sd_error_sl = std.error(sl),number=length(species))
+
+# Use flextable to render the summary table in a tidy forma
+set_flextable_defaults(
+  font.size = 10, theme_fun = theme_vanilla,
+  padding = 6,
+  background.color = "#FFB9B8")
+flextable(data_check)
 
 ```
 
@@ -138,8 +167,8 @@ Second, drop out irrelevant columns and check that there are no spelling issues 
 
 >**Question 5**: The new version of your Rmarkdown file should now be up on *GitHub*. In the browser window click on your most recent commit. Have a look at the file versioning system. You will notice two files side-by-side. Describe what you notice is being presented online. What do the red and green highlights mean?
 
-```{r answer5, echo=TRUE, eval=FALSE}
-## Write your answer here....remember to use '#" in front of your text.
+```{r answer5, echo=TRUE, eval=TRUE}
+## We can notice that the top red section within the file is the source code and the bottom green section is the modified code, while the web page shows how many additions and deletions have been made. The time of the changes is also shown.
 ```
 
 # **Task 5**
@@ -150,8 +179,11 @@ Ignoring figures can be important because they take up quite a lot of space in y
 
 ```{r, prettyfig, fig.align='center', fig.cap="add a legend here"}
 # ggplot figure showing mean activity for each treatment (Control, OA) for each species.
+ggplot(data_check, mapping = aes(x=treatment, y = mean_activity)) +
+  geom_point(aes(color=species))
 
-
+ggplot(data_clean, mapping = aes(x=treatment, y = activity)) +
+  geom_boxplot(aes(color=treatment))+facet_wrap(~species)
 ```
 
 **Stretch Task**: The Clark et al. 2020 paper plots some pretty pictures on their figures. You have access to a folder called "pics/". Add the pics of the difference species from the "pics/" folder to your new plot. Explore the function `annotation_raster()` which might help you achieve this goal.
