@@ -1,7 +1,7 @@
 ---
 title: "Git, GitHub & Ocean Acidification"
-author: "<your name and u number>"
-date: "`r Sys.Date()`"
+author: "<Xiaowen Chen>"
+date: "`09/09/2022`"
 output: 
   bookdown::html_document2:
     code_folding: show
@@ -198,7 +198,7 @@ Note the code chunk used to make the figure. It has a `fig.cap` argument. That m
 Now that you have the figure you may also want to write / save it as a separate file. Use `ggsave` function to save the figure(s) to your new `output/figures/`:
 
 
-```{r, prettyfig, fig.align='center', fig.cap="boxpot with fishes", echo=TRUE, eval = FALSE}
+```{r, prettyfig, fig.align='center', fig.cap="boxpot with fishes", echo=TRUE, eval = TRUE}
 # ggplot figure showing mean activity for each treatment (Control, OA) for each species.
 pics1 <- readPNG("./pics/acantho.png")
 pics2 <- readPNG("./pics/ambon.png")
@@ -225,7 +225,7 @@ Last question for this task. I promise! It's important to think very carefully a
 >**Question 7**: Assume that you added the `pics/` folder to your working directory to plot pictures of each fish on your figure. Do you want to track the files in the pic/ folder on GitHub despite them being .png files? Explain your reasoning. 
 
 ```{r, answer6}
-## Add your answer here
+## Since we need the 6 images in the `pics/` folder for the plot, we need to upload the `pics/` folder to GitHub and do the tracking to help the creator and collaborators with code analysis and editing and get the same images and analysis results. Without the tracking of changes to this folder, the results cannot be synchronised.
 ```
 
 # **Task 6**
@@ -262,8 +262,31 @@ Once you have figured out how to create and solve conflicts it's time to update 
 
 Think about what you would need to know to make sure you can replicate a study. Provide these details so they are easy to find on the README.
 
+The README reads as follows：
+```{r}
+# Pickled-Fish-Cc
+
+#This repository, named Pickled-Fish-Cc, consists of 3 folders and 4 files and is a public database.
+#The folder named data is used to store experimental data and serves as an input folder. It helps with data analysis and currently contains the file OA_activitydat_20190302_BIOL3207.csv
+#The folder named output is used as an output folder to store files after you have completed processing and corrections, where the purpose of the folder named data is to store and track your cleaned up data frames after you have completed all data processing and corrections. The folder named figures is used to store images after processing and corrections have been made.
+#The folder named pics stores the pictures used to draw each fish on the graph, to help make the pictures better for understanding.
+#The gitignore file is created in the R studio to control what is tracked and ignored in Git. Here we have added the path to the graphics folder to this folder.
+#Pickled-Fish-Cc#pickled-fish-cc.Rproj file is our own R project created for the purpose of reusing and sharing, for easy management, organisation and documentation, to keep input and output files related to this project/topic together for ease of finding, and to transfer/backup/share the folder as a whole .
+#The git_fishes_student.Rmd file is an r markdown format file that can be used to easily explore and analyse data, it organically combines the R code with the documentation and our data processing is all done in this file.
+#README.md describes the main information about the project and is a primer for the project, describing the use of the project, its functions and making it easier for others to understand and use.
+```
+
+
 # **Task 8**
 There's not too much to do in this task on the coding front! You just need to create a *GitHub* issue and create a 'To Do' list on *GitHub* for you and your collaborator. 
+```{r}
+# Test experimental results：χ2 test @XiaowenChen0819
+
+# Assessment of model importance: F-tests @ZichuWei
+
+# Find more data @XiaowenChen0819 @ZichuWei
+```
+
 
 # **Task 9**
 Here, run some statistical tests to determine, for each species, whether the control vs high $CO^2$ treatments differ significantly from each other and in what direction. Provide the difference in means, their 95% confidence intervals, t-statistic, df and p-value. 
@@ -360,7 +383,17 @@ Now that you have a table, you can reference it within a document. For example, 
 
 > **Question 8**: Pick one of your favorite species and write about the results to a reader. Write in the Rmarkdown file below what 1) the means and mean differences between control and acidification treatment is along with 2) the 95% confidence intervals of the difference
 
-You can write your blurb below this. Before you do that, a few cool features of Rmarkdown. You can actually code in objects so that, when they are rendered they replace the inline code chunk with the result. To give you an example, an inline code chunk is written as follows: `r "add code here"`. When you render the document, whatever you place in the "add code here" section will be rendered. In this case, we are giving a string, so it simply just adds that in the place where the code is, render and see for yourself.  
+```{r}
+humbug <- data_clean%>%filter(species=="humbug")
+humbug_co2 <- humbug%>%filter(treatment=="CO2")
+humbug_con <- humbug%>%filter(treatment=="control")
+
+t.test(humbug_con$activity,humbug_co2$activity)
+
+# According to the result of t-test, 1) the means of control is 36,the means of acidification treatment is 40, and the mean differences between control and acidification treatment is 4, 2) the 95% confidence intervals of the difference is -8.40~0.29.
+```
+
+You can write your blurb above this. Before you do that, a few cool features of Rmarkdown. You can actually code in objects so that, when they are rendered they replace the inline code chunk with the result. To give you an example, an inline code chunk is written as follows: `r "add code here"`. When you render the document, whatever you place in the "add code here" section will be rendered. In this case, we are giving a string, so it simply just adds that in the place where the code is, render and see for yourself.  
 
 Moving forward on that you can also add in an object and whatever that objects value is will also be spit out. For example, consider the following: `r x = 10; x`. What will happen? Well, it will place in the value 10 when rendered. Again, if you don't believe me, check for yourself by rendering the document. 
 
@@ -371,19 +404,26 @@ Mean activity for `r "species name here"` in the control group was `r "add code 
 Now, using what you just learnt, describe what the null hypothesis being tested was and provide statistical evidence (t-statistic, df, and p-value) to support your conclusion about whether we can reject the null hypothesis. Again, make sure you use in-line code. Write you answer below:
 
 **Write your answer here**
+```{r}
+# The mean differences between control and acidification treatment is equal to 0, so there is no significant difference between control and acidification treatment for this species. Since the results obtained by t-test are t = -2, DF = 137, and p-value = 0.07, which are greater than 0.05, we accept the null hypothesis. However, since 0.07 is very close to 0.05, the results we obtain are not significant, so we cannot completely accept our null hypothesis with great certainty.
+```
 
 
 Re-analyse the data for a single species using permutations instead of a t-test. Do your results differ?
 
 >**Stretch Task**:  If you really want a challenge try doing permutation tests for each species. Again, loops, functions or tidyverse (or even combinations might help). 
 
-```{r, stretch2, echo=TRUE, eval=FALSE}
+```{r, stretch2, echo=TRUE, eval=TRUE}
 # Add your code here.
 ```
 
 Below. Add a few sentences for the species (or multiple species) you talked about above to describe the permutation results:
 
 **Add your text and inline code chunks here**
+```{r}
+
+```
+
 
 # **Task 10**
 
