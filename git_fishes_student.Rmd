@@ -354,6 +354,17 @@ t.test(whitedams_co2$activity,whitedams_con$activity)
 
 ```{r, stats, echo=TRUE, eval=TRUE}
 # Add your code here
+#Permutation test 
+ permutation.test <- function(treatment, outcome, n){ 
+ distribution=c() 
+ result=0 
+ for(i in 1:n){ 
+ distribution[i]=diff(by(outcome, sample(treatment, length(treatment), FALSE), mean)) 
+ } 
+ result=sum(abs(distribution) >= abs(original))/(n) 
+ return(list(result, distribution)) 
+ } 
+
 
 ```
 
@@ -414,14 +425,145 @@ Re-analyse the data for a single species using permutations instead of a t-test.
 >**Stretch Task**:  If you really want a challenge try doing permutation tests for each species. Again, loops, functions or tidyverse (or even combinations might help). 
 
 ```{r, stretch2, echo=TRUE, eval=TRUE}
-# Add your code here.
+ambon <- data_clean %>% filter(species == "ambon")
+new_group_data1 <- tibble(ID=ambon$treatment,value=ambon$activity)
+
+
+n_reps <- 10000
+
+samp_dist1 <- rep(0,n_reps)
+
+for (i in 1:n_reps)   
+{
+    permuted_group_data1 <- new_group_data1 %>% mutate(ID = ID[sample(row_number())])
+  
+    permuted_t_test_results1 <- t.test(permuted_group_data1$value[which(permuted_group_data1$ID=="CO2")],permuted_group_data1$value[which(permuted_group_data1$ID=="control")],var.equal=T)
+
+    samp_dist1[i] <- permuted_t_test_results1$statistic
+}
+samp_dist1
+
+plot_tibble1 <- tibble(value = samp_dist1,extreme = (abs(samp_dist1) > 0.8))
+
+ggplot(plot_tibble1,aes(x=value,fill=extreme))+geom_histogram(bins=200)
 ```
+
+```{r}
+chromis <- data_clean %>% filter(species == "chromis")
+new_group_data2 <- tibble(ID=chromis$treatment,value=chromis$activity)
+head(new_group_data2)
+n_reps <- 10000
+samp_dist2 <- rep(0,n_reps)
+for (i in 1:n_reps)
+{
+    permuted_group_data2 <- new_group_data2 %>% mutate(ID = ID[sample(row_number())])
+    permuted_t_test_results2 <- t.test(permuted_group_data2$value[which(permuted_group_data2$ID=="control")],permuted_group_data2$value[which(permuted_group_data2$ID=="CO2")],var.equal=T)
+    samp_dist2[i] <- permuted_t_test_results2$statistic
+}
+plot_tibble2 <- tibble(value = samp_dist2,extreme = (abs(samp_dist2) > 0.7))
+ggplot(plot_tibble2,aes(x=value,fill=extreme))+geom_histogram(bins=200)
+```
+
+
+```{r}
+acantho <- data_clean %>% filter(species == "acantho")
+new_group_data3 <- tibble(ID=acantho$treatment,value=acantho$activity)
+head(new_group_data3)
+n_reps <- 10000
+samp_dist3 <- rep(0,n_reps)
+for (i in 1:n_reps)
+{
+    permuted_group_data3 <- new_group_data3 %>% mutate(ID = ID[sample(row_number())])
+    permuted_t_test_results3 <- t.test(permuted_group_data3$value[which(permuted_group_data3$ID=="control")],permuted_group_data3$value[which(permuted_group_data3$ID=="CO2")],var.equal=T)
+    samp_dist3[i] <- permuted_t_test_results3$statistic
+}
+plot_tibble3 <- tibble(value = samp_dist3,extreme = (abs(samp_dist3) > 0.4))
+ggplot(plot_tibble3,aes(x=value,fill=extreme))+geom_histogram(bins=200)
+```
+
+```{r, stretch2, echo=TRUE, eval=TRUE}
+
+humbug <- data_clean %>% filter(species == "humbug")
+new_group_data4 <- tibble(ID=humbug$treatment,value=humbug$activity)
+
+
+n_reps <- 10000
+
+samp_dist4 <- rep(0,n_reps)
+
+for (i in 1:n_reps)   
+{
+    permuted_group_data4 <- new_group_data4 %>% mutate(ID = ID[sample(row_number())])
+  
+    permuted_t_test_results4 <- t.test(permuted_group_data4$value[which(permuted_group_data4$ID=="CO2")],permuted_group_data4$value[which(permuted_group_data4$ID=="control")],var.equal=T)
+
+    samp_dist4[i] <- permuted_t_test_results4$statistic
+}
+samp_dist4
+
+plot_tibble4 <- tibble(value = samp_dist4,extreme = (abs(samp_dist4) > 0.07))
+
+ggplot(plot_tibble4,aes(x=value,fill=extreme))+geom_histogram(bins=200)
+```
+
+
+```{r, stretch2, echo=TRUE, eval=TRUE}
+
+lemon <- data_clean %>% filter(species == "lemon")
+new_group_data5 <- tibble(ID=lemon$treatment,value=lemon$activity)
+
+
+n_reps <- 10000
+
+samp_dist5 <- rep(0,n_reps)
+
+for (i in 1:n_reps)   
+{
+    permuted_group_data5 <- new_group_data5 %>% mutate(ID = ID[sample(row_number())])
+  
+    permuted_t_test_results5 <- t.test(permuted_group_data5$value[which(permuted_group_data5$ID=="CO2")],permuted_group_data5$value[which(permuted_group_data5$ID=="control")],var.equal=T)
+
+    samp_dist5[i] <- permuted_t_test_results5$statistic
+}
+samp_dist5
+
+plot_tibble5 <- tibble(value = samp_dist5,extreme = (abs(samp_dist5) > 0.07))
+
+ggplot(plot_tibble5,aes(x=value,fill=extreme))+geom_histogram(bins=200)
+```
+
+
+```{r, stretch2, echo=TRUE, eval=TRUE}
+whitedams <- data_clean %>% filter(species == "whitedams")
+new_group_data6 <- tibble(ID=whitedams$treatment,value=whitedams$activity)
+
+
+n_reps <- 10000
+
+samp_dist6 <- rep(0,n_reps)
+
+for (i in 1:n_reps)   
+{
+    permuted_group_data6 <- new_group_data6 %>% mutate(ID = ID[sample(row_number())])
+  
+    permuted_t_test_results6 <- t.test(permuted_group_data6$value[which(permuted_group_data6$ID=="CO2")],permuted_group_data6$value[which(permuted_group_data6$ID=="control")],var.equal=T)
+
+    samp_dist6[i] <- permuted_t_test_results6$statistic
+}
+samp_dist6
+
+plot_tibble6 <- tibble(value = samp_dist6,extreme = (abs(samp_dist6) > 0.2))
+
+ggplot(plot_tibble6,aes(x=value,fill=extreme))+geom_histogram(bins=200)
+```
+
+
 
 Below. Add a few sentences for the species (or multiple species) you talked about above to describe the permutation results:
 
 **Add your text and inline code chunks here**
 ```{r}
-
+# According to the normal distribution map obtained by each species displacement test, compared with the previous t-test results, the obtained results are similar to our previous results, which proves the validity and reliability of the t-test results.
 ```
 
 
